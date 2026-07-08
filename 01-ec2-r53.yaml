@@ -7,6 +7,7 @@
     zone_id: Z05991441T1HV11ZNW7DB
     domain_name: manibhargavi2225.online
     # we can pass instances through command line using -e
+    # ansible-playbook -i inventory.ini 01-ec2-r53.yaml -e "instances=['rabbitmq','catalogue','user','cart']"
     # instances:
     # - mongodb
     # - redis
