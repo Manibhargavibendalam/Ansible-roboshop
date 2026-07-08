@@ -6,11 +6,12 @@
     sg_id: sg-0c33b774f006a3cb0
     zone_id: Z05991441T1HV11ZNW7DB
     domain_name: manibhargavi2225.online
-    instances:
-    - mongodb
-    - redis
-    - mysql
-    - rabbitmq
+    # we can pass instances through command line using -e
+    # instances:
+    # - mongodb
+    # - redis
+    # - mysql
+    # - rabbitmq
   tasks:
   - name: create ec2 instance
     amazon.aws.ec2_instance:
