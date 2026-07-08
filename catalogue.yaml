@@ -73,3 +73,9 @@
   - name: load products into mongodb
     ansible.builtin.shell: mongosh --host mongodb.manibhargavi2225.online </app/db/master-data.js
     when: catalogue_output.stdout | int < 0
+
+  - name: start and enable the catalogue
+    ansible.builtin.service:
+      name: catalogue
+      enabled: yes
+      state:  started
