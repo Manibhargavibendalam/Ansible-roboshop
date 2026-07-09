@@ -21,11 +21,22 @@
       shell: /sbin/nologin
       home: /app
 
+  # Safe to remove directory,beacause 2nd time if we run it will downliad freshly.no error if doesnot exit
+  - name: remove app directory if exists
+    ansible.builtin.file:
+      path: /app
+      state: absent
+
   - name: create app directory
     ansible.builtin.file:
       state: directory
       path: /app
   
+  - name: Delete catalogue files
+    ansible.builtin.file:
+      path: /tmp/catalogue.zip
+      state: absent
+
   - name: download catalogue application
     ansible.builtin.get_url:
       url: https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip
@@ -74,8 +85,15 @@
     ansible.builtin.shell: mongosh --host mongodb.manibhargavi2225.online </app/db/master-data.js
     when: catalogue_output.stdout | int < 0
 
-  - name: start and enable the catalogue
-    ansible.builtin.service:
+  # - name: start and enable the catalogue
+  #   ansible.builtin.service:
+  #     name: catalogue
+  #     enabled: yes
+  #     state:  started
+
+ - name: daemon reload enable and start
+   ansible.builtin.systemd_service:
       name: catalogue
-      enabled: yes
-      state:  started
+      enabled: true
+      state: started
+      daemon_reload: true
