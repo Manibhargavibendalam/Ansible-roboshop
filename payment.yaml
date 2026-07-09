@@ -1,4 +1,3 @@
-
 - name: configure payment server
   hosts: payment
   become: yes
@@ -15,13 +14,12 @@
   - name: create roboshop system user
     ansible.builtin.user:
       name: roboshop
-      comment: roboshop system user
+      comment: RoboShop System user
       system: true
       shell: /sbin/nologin
       home: /app
-
-  # Safe to remove directory,beacause 2nd time if we run it will downliad freshly.no error if doesnot exit
-  - name: remove app directory if exists
+  # Safe to remove directory, because 2nd time if we run it will download freshly. no error if does not exist
+  - name: remove app directory
     ansible.builtin.file:
       path: /app
       state: absent
@@ -30,8 +28,8 @@
     ansible.builtin.file:
       state: directory
       path: /app
-  
-  - name: Delete payment files
+
+  - name: Delete payment file
     ansible.builtin.file:
       path: /tmp/payment.zip
       state: absent
@@ -40,12 +38,13 @@
     ansible.builtin.get_url:
       url: https://roboshop-artifacts.s3.amazonaws.com/payment-v3.zip
       dest: /tmp/payment.zip
-  
+
   - name: extract payment application
     ansible.builtin.unarchive:
       src: /tmp/payment.zip
       dest: /app
       remote_src: yes
+
   - name: install dependencies
     ansible.builtin.pip:
       requirements: requirements.txt
@@ -53,9 +52,14 @@
     args:
       chdir: /app
 
-  - name: copy catalogue service
+  - name: copy payment service
     ansible.builtin.copy:
-      src: catalogue.service
-      dest: /etc/systemd/system/catalogue.service
-  
+      src: payment.service
+      dest: /etc/systemd/system/payment.service
 
+  - name: daemon reload enable and start
+    ansible.builtin.systemd_service:
+      name: payment
+      enabled: true
+      state: started
+      daemon_reload: true
